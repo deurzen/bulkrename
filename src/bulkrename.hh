@@ -5,7 +5,7 @@
 #include "file.hh"
 
 #include <filesystem>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <memory>
 
 
@@ -22,7 +22,7 @@ public:
     static ::std::unique_ptr<bulkrename_t> init(const ::std::string&);
 
 private:
-    ::boost::filesystem::directory_iterator dir_it;
+    ::std::filesystem::directory_iterator dir_it;
     nodetree_t tree;
     filehandler_t filehandler;
 

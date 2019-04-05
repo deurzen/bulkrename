@@ -1,14 +1,14 @@
 #include "node.hh"
 
 void
-dir_t::populate(::boost::filesystem::directory_iterator dir_it)
+dir_t::populate(::std::filesystem::directory_iterator dir_it)
 {
     for (auto& entry : dir_it) {
-        if (::boost::filesystem::is_directory(entry)) {
+        if (::std::filesystem::is_directory(entry)) {
             dir_ptr_t dir = new dir_t(entry.path(), parent);
             children.push_back(dir);
-            dir->populate(::boost::filesystem::directory_iterator(entry));
-        } else if (::boost::filesystem::is_regular_file(entry)) {
+            dir->populate(::std::filesystem::directory_iterator(entry));
+        } else if (::std::filesystem::is_regular_file(entry)) {
             file_ptr_t file = new file_t(entry.path(), parent);
             children.push_back(file);
         }
@@ -17,7 +17,7 @@ dir_t::populate(::boost::filesystem::directory_iterator dir_it)
 
 
 void
-nodetree_t::populate(::boost::filesystem::directory_iterator dir_it)
+nodetree_t::populate(::std::filesystem::directory_iterator dir_it)
 {
     root->populate(dir_it);
 }
@@ -59,7 +59,7 @@ void
 file_t::rename() const
 {
     if (name != new_name)
-        ::boost::filesystem::rename(path, path.parent_path().string() + "/" + new_name);
+        ::std::filesystem::rename(path, path.parent_path().string() + "/" + new_name);
 }
 
 ::std::vector<file_ptr_t>

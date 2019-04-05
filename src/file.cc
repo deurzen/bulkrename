@@ -30,10 +30,10 @@ filehandler_t::read_in(const nodetree_t& tree)
         ::std::getline(in, name);
 
         if (!in)
-            throw ::std::runtime_error("amount of names does not match amount of files");
+            throw ::std::runtime_error("amount of names must match amount of files");
 
         if (name.empty())
-            throw ::std::runtime_error("file name must be non-empty");
+            throw ::std::runtime_error("file names must be non-empty");
 
         auto dirname  = file->get_path().parent_path().string();
         auto filename = file->get_path().filename().string();
@@ -54,7 +54,7 @@ filehandler_t::read_in(const nodetree_t& tree)
     in.close();
 
     if (conflict_found)
-        throw ::std::runtime_error("multiple files within a directory are given the same name");
+        throw ::std::runtime_error("files within the same directory must have different names");
 }
 
 void
