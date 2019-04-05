@@ -1,7 +1,7 @@
 #ifndef __BULKRENAME_NODE_GUARD__
 #define __BULKRENAME_NODE_GUARD__
 
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 
@@ -19,7 +19,7 @@ typedef class node_t
 {
 public:
     /* node_t(nodetype_t _type, node_ptr_t _parent, const ::std::string& _name) */
-    node_t(nodetype_t _type, node_ptr_t _parent, const ::boost::filesystem::path& _path)
+    node_t(nodetype_t _type, node_ptr_t _parent, const ::std::filesystem::path& _path)
         : type(_type), parent(_parent), path(_path)
     {}
 
@@ -27,12 +27,12 @@ public:
     virtual void print(::std::ostream& out) const = 0;
 
     const nodetype_t get_type() const { return type; }
-    const ::boost::filesystem::path get_path() const { return path; }
+    const ::std::filesystem::path get_path() const { return path; }
 
 protected:
     nodetype_t type;
     node_ptr_t parent;
-    ::boost::filesystem::path path;
+    ::std::filesystem::path path;
     ::std::string name;
 
 }* node_ptr_t;
@@ -43,7 +43,7 @@ protected:
 typedef class file_t : public node_t
 {
 public:
-    explicit file_t(const ::boost::filesystem::path& path, node_ptr_t parent)
+    explicit file_t(const ::std::filesystem::path& path, node_ptr_t parent)
         : node_t(nodetype_t::file, parent, path), new_name(path.string())
     {}
 
@@ -65,11 +65,11 @@ private:
 typedef class dir_t : public node_t
 {
 public:
-    explicit dir_t(const ::boost::filesystem::path& path, node_ptr_t parent)
+    explicit dir_t(const ::std::filesystem::path& path, node_ptr_t parent)
         : node_t(nodetype_t::dir, parent, path)
     {}
 
-    void populate(::boost::filesystem::directory_iterator);
+    void populate(::std::filesystem::directory_iterator);
     bool has_next() const override { return !children.empty(); }
     void print(::std::ostream& out) const override;
 
@@ -93,7 +93,7 @@ public:
     nodetree_t& operator=(const nodetree_t&) = delete;
     nodetree_t(const nodetree_t&) = delete;
 
-    void populate(::boost::filesystem::directory_iterator);
+    void populate(::std::filesystem::directory_iterator);
     void print(::std::ostream& out) const;
 
     ::std::vector<file_ptr_t> get_files() const;

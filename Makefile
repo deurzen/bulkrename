@@ -2,7 +2,7 @@ PROJECT = bulkrename
 
 CC = g++
 CXXFLAGS ?= -std=c++17
-CXXFLAGS += -lboost_system -lboost_filesystem
+LDFLAGS  += -lstdc++fs
 
 OBJDIR = obj
 SRCDIR = src
@@ -33,7 +33,7 @@ notify-link:
 	@echo linking
 
 build: notify-build bin obj ${OBJ_FILES} notify-link
-	${CC} ${CXXFLAGS} ${OBJ_FILES} -o ${TARGET}
+	${CC} ${CXXFLAGS} ${OBJ_FILES} ${LDFLAGS} -o ${TARGET}
 
 -include $(DEPS)
 
