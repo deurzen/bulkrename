@@ -6,10 +6,9 @@ CXXFLAGS += -lboost_system -lboost_filesystem
 
 OBJDIR = obj
 SRCDIR = src
+TARGET = bin/$(PROJECT)
 
 DEPS = $(OBJ_FILES:%.o=%.d)
-
-TARGET = bin/$(PROJECT)
 
 H_FILES := $(shell find $(SRCDIR) -name '*.hh')
 SRC_FILES := $(shell find $(SRCDIR) -name '*.cc')
@@ -18,7 +17,7 @@ OBJ_FILES := $(patsubst src/%.cc,obj/%.o,${SRC_FILES})
 all: build
 
 install:
-	install $(RELEASE) /usr/$(BIN)
+	install $(TARGET) /usr/bin/$(PROJECT)
 
 bin:
 	@[ -d bin ] || mkdir bin
