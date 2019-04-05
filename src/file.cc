@@ -66,7 +66,7 @@ filehandler_t::edit() const
 }
 
 void
-filehandler_t::rename(const nodetree_t& tree) const
+filehandler_t::propagate_rename(const nodetree_t& tree) const
 {
     ::std::vector<file_ptr_t> files = tree.get_files();
     for (auto& file : files)

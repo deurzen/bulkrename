@@ -28,5 +28,5 @@ bulkrename_t::run()
         exit(1);
     }
 
-    filehandler.rename(tree);
+    filehandler.propagate_rename(tree);
 }

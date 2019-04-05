@@ -32,7 +32,7 @@ public:
     void read_in(const nodetree_t&);
 
     void edit() const;
-    void rename(const nodetree_t&) const;
+    void propagate_rename(const nodetree_t&) const;
 
 private:
     ::std::string tmpfile;
