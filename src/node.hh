@@ -1,10 +1,10 @@
 #ifndef __BULKRENAME_NODE_GUARD__
 #define __BULKRENAME_NODE_GUARD__
 
-#include <string>
-#include <utility>
-#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem.hpp>
+#include <fstream>
 #include <iostream>
+
 
 enum class nodetype_t
 {
@@ -12,58 +12,99 @@ enum class nodetype_t
     dir
 };
 
-class File;
-class Directory;
 
-class Node {
+typedef class node_t* node_ptr_t;
+
+typedef class node_t
+{
 public:
-    nodetype_t type() const { return t; }
-    ::std::string name() const { return n; }
+    /* node_t(nodetype_t _type, node_ptr_t _parent, const ::std::string& _name) */
+    node_t(nodetype_t _type, node_ptr_t _parent, const ::boost::filesystem::path& _path)
+        : type(_type), parent(_parent), path(_path)
+    {}
 
-    virtual const Node* fwd() const = 0;
-    virtual File* getfile() = 0;
-    virtual void setnewname(const ::std::string& s) = 0;
+    virtual bool has_next() const = 0;
+    virtual void print(::std::ostream& out) const = 0;
+
+    const nodetype_t get_type() const { return type; }
+    const ::boost::filesystem::path get_path() const { return path; }
 
 protected:
-    explicit Node(nodetype_t type, ::std::string s): t(type), n(::std::move(s)) {}
+    nodetype_t type;
+    node_ptr_t parent;
+    ::boost::filesystem::path path;
+    ::std::string name;
 
-    nodetype_t t{};
-    ::std::string n{};
+}* node_ptr_t;
 
-};
+::std::ostream& operator<<(::std::ostream&, node_ptr_t);
 
-class File: public Node {
+
+typedef class file_t : public node_t
+{
 public:
-    explicit File(const ::std::string& s): Node(nodetype_t::file, s), nn(Node::name()) {}
+    explicit file_t(const ::boost::filesystem::path& path, node_ptr_t parent)
+        : node_t(nodetype_t::file, parent, path), new_name(path.string())
+    {}
 
-    const Node* fwd() const override { return nullptr; };
-    File* getfile() override { return this; }
+    bool has_next() const override { return false; }
+    void print(::std::ostream& out) const override;
 
-    void setnewname(const ::std::string& s) override { nn = s; }
-    ::std::string getnewname() { return nn; }
-    bool valid() { return nn != name(); }
+    void set_name(const ::std::string& name) { new_name = name; }
 
-    void move(const ::std::string& prefix) const {
-        ::boost::filesystem::rename(prefix + name(), prefix + nn);
-    }
+    void rename() const;
 
 private:
-    ::std::string nn{};
+    ::std::string new_name;
 
-};
+}* file_ptr_t;
 
-class Directory: public Node {
+::std::ostream& operator<<(::std::ostream&, file_ptr_t);
+
+
+typedef class dir_t : public node_t
+{
 public:
-    explicit Directory(const ::std::string& s, Node& n): Node(nodetype_t::dir, s), next(&n) {}
+    explicit dir_t(const ::boost::filesystem::path& path, node_ptr_t parent)
+        : node_t(nodetype_t::dir, parent, path)
+    {}
 
-    const Node*     fwd() const override { return next; }
-    File* getfile() override { return next->getfile(); }
+    void populate(::boost::filesystem::directory_iterator);
+    bool has_next() const override { return !children.empty(); }
+    void print(::std::ostream& out) const override;
 
-    void setnewname(const ::std::string& s) override { }
+    ::std::vector<file_ptr_t> file_leaves() const;
 
 private:
-    Node* next;
+    ::std::vector<node_ptr_t> children;
+
+}* dir_ptr_t;
+
+::std::ostream& operator<<(::std::ostream&, dir_ptr_t);
+
+
+class nodetree_t
+{
+public:
+    explicit nodetree_t(const ::std::string& _root_name)
+        : root_name(_root_name), root(new dir_t(_root_name, nullptr))
+    {}
+
+    nodetree_t& operator=(const nodetree_t&) = delete;
+    nodetree_t(const nodetree_t&) = delete;
+
+    void populate(::boost::filesystem::directory_iterator);
+    void print(::std::ostream& out) const;
+
+    ::std::vector<file_ptr_t> get_files() const;
+
+private:
+    ::std::string root_name;
+    dir_ptr_t root;
 
 };
+
+::std::ostream& operator<<(::std::ostream&, nodetree_t);
+
 
 #endif//__BULKRENAME_NODE_GUARD__
