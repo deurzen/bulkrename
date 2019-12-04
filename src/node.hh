@@ -70,7 +70,7 @@ public:
         : node_t(nodetype_t::dir, parent, path)
     {}
 
-    void populate(::std::filesystem::directory_iterator);
+    void populate(::std::filesystem::directory_iterator, bool recurse = false);
     bool has_next() const override { return !children.empty(); }
     void print(::std::ostream& out) const override;
 
@@ -87,8 +87,8 @@ private:
 class nodetree_t
 {
 public:
-    explicit nodetree_t(const ::std::string& _root_name)
-        : root_name(_root_name), root(new dir_t(_root_name, nullptr))
+    explicit nodetree_t(bool recurse, const ::std::string& _root_name)
+        : recurse(recurse), root_name(_root_name), root(new dir_t(_root_name, nullptr))
     {}
 
     nodetree_t& operator=(const nodetree_t&) = delete;
@@ -100,6 +100,7 @@ public:
     ::std::vector<file_ptr_t> get_files() const;
 
 private:
+    bool recurse;
     ::std::string root_name;
     dir_ptr_t root;
 

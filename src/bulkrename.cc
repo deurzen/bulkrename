@@ -4,9 +4,9 @@
 #include <iostream>
 
 ::std::unique_ptr<bulkrename_t>
-bulkrename_t::init(const ::std::string& dir)
+bulkrename_t::init(int argc, char** argv)
 {
-    return ::std::make_unique<bulkrename_t>(dir);
+    return ::std::make_unique<bulkrename_t>(argc, argv);
 }
 
 void

@@ -7,7 +7,7 @@
 int
 main(int argc, char** argv)
 {
-    auto brn = bulkrename_t::init(argc > 1 ? argv[1] : ".");
+    auto brn = bulkrename_t::init(argc, argv);
 
     brn->setup();
     brn->run();
